@@ -21,12 +21,16 @@ function! ack#Ack(cmd, args)
 
   let grepprg_bak = &grepprg
   let grepformat_bak = &grepformat
+  let shellpipe_bak = &shellpipe
   let &grepprg=l:ackprg_run
   let &grepformat=g:ackformat
 
   try
     " NOTE: we escape special chars, but not everything using shellescape to
     "       allow for passing arguments etc
+    let &shellpipe = ">"
+    let &grepprg=g:ackprg
+    let &grepformat=g:ackformat
     if g:ack_use_dispatch
       let &l:errorformat = g:ackformat
       let &l:makeprg=g:ackprg." " . escape(l:grepargs, '|#%')
@@ -38,6 +42,7 @@ function! ack#Ack(cmd, args)
   finally
     let &grepprg=grepprg_bak
     let &grepformat=grepformat_bak
+    let &shellpipe=shellpipe_bak
   endtry
 
   if a:cmd =~# '^l'
